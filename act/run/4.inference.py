@@ -11,12 +11,77 @@ import os
 
 # ================= 配置 =================
 CKPT_DIR = "model"
-MODEL_PATH = os.path.join(CKPT_DIR, "policy_last.pth") # 加载最后一次训练的模型
-STATS_PATH = os.path.join(CKPT_DIR, "dataset_stats.pkl") # 加载统计量
+# 如果你想在代码中直接指定某个模型文件名（相对于 CKPT_DIR），可以把
+# MODEL_CHOICE 设为文件名字符串，例如: "policy_epoch_50.pth"。
+# 否则设为 None，会在运行时给出交互式选择（或自动选择最新）。
+MODEL_CHOICE = "policy_epoch_50.pth"
+
+def find_latest_ckpt(dir_path):
+    if not os.path.isdir(dir_path):
+        return os.path.join(dir_path, "policy_epoch_100.pth")
+    pths = [f for f in os.listdir(dir_path) if f.endswith('.pth')]
+    if not pths:
+        return os.path.join(dir_path, "policy_epoch_100.pth")
+    pths_full = [os.path.join(dir_path, f) for f in pths]
+    pths_full.sort(key=lambda x: os.path.getmtime(x), reverse=True)
+    return pths_full[0]
+
+def choose_ckpt(dir_path, default_choice=None):
+    """列出目录下的 .pth 文件，让用户选择，或使用代码中指定的 default_choice。"""
+    if default_choice:
+        cand = os.path.join(dir_path, default_choice)
+        if os.path.exists(cand):
+            return cand
+        else:
+            print(f"指定的模型文件不存在: {cand}，将尝试交互选择或使用最新模型。")
+
+    if not os.path.isdir(dir_path):
+        return find_latest_ckpt(dir_path)
+
+    pths = [f for f in os.listdir(dir_path) if f.endswith('.pth')]
+    if not pths:
+        return find_latest_ckpt(dir_path)
+
+    # 按时间倒序排序显示给用户
+    pths_full = [os.path.join(dir_path, f) for f in pths]
+    pths_full.sort(key=lambda x: os.path.getmtime(x), reverse=True)
+
+    print("可用的 checkpoint:")
+    for i, p in enumerate(pths_full):
+        print(f"  [{i}] {os.path.basename(p)}")
+
+    try:
+        choice = input("输入要加载的序号或文件名（回车使用最新）: ").strip()
+    except Exception:
+        choice = ""
+
+    if choice == "":
+        return pths_full[0]
+
+    # 如果输入的是数字索引
+    if choice.isdigit():
+        idx = int(choice)
+        if 0 <= idx < len(pths_full):
+            return pths_full[idx]
+        else:
+            print("索引超出范围，使用最新模型。")
+            return pths_full[0]
+
+    # 否则按文件名查找
+    cand_name = choice
+    for p in pths_full:
+        if os.path.basename(p) == cand_name:
+            return p
+
+    print("未找到匹配的文件名，使用最新模型。")
+    return pths_full[0]
+
+MODEL_PATH = choose_ckpt(CKPT_DIR, MODEL_CHOICE)
+STATS_PATH = os.path.join(CKPT_DIR, "dataset_stats.pkl")  # 加载统计量
 XML_PATH = "franka_emika_panda/scene.xml"
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-CHUNK_SIZE = 100  
+CHUNK_SIZE = 60  
 SIM_DT = 0.002    
 CONTROL_DT = 0.02 
 
