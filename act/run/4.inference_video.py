@@ -1,11 +1,11 @@
 import os
-# 【核心修改】这两行必须在 import mujoco 之前！
+
 # 强制使用 EGL 后端（无头渲染），不依赖 X11 窗口
-os.environ['MUJOCO_GL'] = 'egl' 
-
+# os.environ['MUJOCO_GL'] = 'egl' 
+os.environ['MUJOCO_GL'] = 'glfw' 
 # 也可以加上这一行，强制让 PyTorch 和 MuJoCo 都能看到显卡
-os.environ['PYOPENGL_PLATFORM'] = 'egl'
-
+# os.environ['PYOPENGL_PLATFORM'] = 'egl'
+os.environ['PYOPENGL_PLATFORM'] = 'glfw' 
 import torch
 import torch.nn as nn
 import torchvision.transforms as transforms
@@ -20,16 +20,16 @@ import imageio
 
 # ================= 配置 =================
 CKPT_DIR = "model"
-MODEL_PATH = os.path.join(CKPT_DIR, "policy_last.pth")
+MODEL_PATH = os.path.join(CKPT_DIR, "policy_epoch_100.pth")
 STATS_PATH = os.path.join(CKPT_DIR, "dataset_stats.pkl")
-XML_PATH = "../franka_emika_panda/scene.xml"
+XML_PATH = "./franka_emika_panda/scene.xml"
 SAVE_VIDEO_PATH = "inference_result.mp4"  # <--- 视频保存路径
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 # ⚠️ 关键设置：告诉 MuJoCo 使用 EGL 后端进行无头渲染 (Headless Rendering)
 os.environ['MUJOCO_GL'] = 'egl'
 
-CHUNK_SIZE = 100
+CHUNK_SIZE = 60
 SIM_DT = 0.002
 CONTROL_DT = 0.02
 

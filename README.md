@@ -3,6 +3,9 @@
 ## 简介
 这是一个基于 MuJoCo 的 Franka Emika Panda 机械臂模仿学习（Imitation Learning, IL）实践项目。当前实现了基于 ACT（Action Transformer / CVAE 风格）算法的训练/推理 pipeline，并包含一个抓取任务作为示范。项目为后续添加更多算法（例如 DDPG/DP）、更多任务（如物体排序、移动到目标位置等）提供基础框架。
 
+
+![ACT 抓取示例](docs/act_oick.gif)
+
 ## 目标
 - 提供一个清晰的模仿学习流水线（数据记录、训练、重训练、推理/验证）。
 - 以抓取任务为起点，逐步扩展更多任务与算法。
@@ -73,9 +76,5 @@ python act/run/4.validate_model.py
 - 欢迎提交 issue/PR，或把你的任务/算法添加为新的子目录。
 - 如果你想加入项目，请通过邮件联系我（zongyangwu2024@163.com）。
 
-## 示例动画
-下面是演示动图示例（把 `docs/act_oick.gif` 放到仓库 `docs/` 下即可显示）：
 
-![ACT 抓取示例](docs/act_oick.gif)
 
-若动图太大或你想使用视频，请参考上面的“演示视频”部分。
