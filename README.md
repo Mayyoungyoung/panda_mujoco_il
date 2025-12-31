@@ -16,9 +16,6 @@
     - `3.train.py`、`3.retrain.py`：训练与重训练脚本
     - `4.inference.py`、`4.inference_video.py`、`4.validate_model.py`：推理/验证脚本
 - `franka_emika_panda/`：模型与场景描述（XML/URDF）和资源文件
-- `model/`：训练生成的模型与统计量（`.pth`、`dataset_stats.pkl`）
-
-> 注意：`model/` 下的大文件默认在 `.gitignore` 中被忽略（参见仓库根目录的 `.gitignore`）。
 
 ## 依赖
 建议使用 conda 创建隔离环境（示例）：
@@ -65,29 +62,6 @@ python act/run/4.validate_model.py
   - 在代码中直接指定：编辑 `act/run/4.inference.py` 中的 `MODEL_CHOICE = "policy_epoch_50.pth"`（相对于 `model/` 目录）。
   - 交互式选择：运行 `4.inference.py` 时会列出 `model/` 下所有 `.pth` 文件，输入序号或文件名选择，回车会选择最新的文件。
 
-## 关于模型文件未被上传到 GitHub 的原因
-仓库根目录的 `.gitignore` 默认忽略如下文件类型：`*.pth`, `*.pt`, `*.pkl` 等，因此 `model/` 下的模型文件和统计量不会被 git 跟踪，也不会被推送到远程仓库。
-
-建议的处理方式：
-- 推荐：使用 Git LFS 来托管大模型文件：
-  ```powershell
-  git lfs install
-  git lfs track "*.pth"
-  git lfs track "*.pkl"
-  git add .gitattributes
-  git add model/policy_epoch_100.pth model/dataset_stats.pkl
-  git commit -m "Add model files via Git LFS"
-  git push -u origin <branch>
-  ```
-- 或者把模型上传到 GitHub Release / Google Drive / S3，并在仓库中保存下载脚本（推荐用于公开/分发）。
-- 若确实要把模型直接加入仓库，可临时强制添加：
-  ```powershell
-  git add -f model/policy_epoch_100.pth model/dataset_stats.pkl
-  git commit -m "Force add model files"
-  git push
-  ```
-  但这会使仓库膨胀，不推荐长期使用。
-
 ## 未来计划
 - 添加更多算法（例如基于强化学习的 DP、DDPG 等）与训练策略。
 - 增加更多任务：物体排序、放置、复杂抓取场景等。
@@ -95,31 +69,13 @@ python act/run/4.validate_model.py
 
 
 
-我将把截图放到 `docs/` 并在 README 中引用它们。
-
-## 演示视频
-
-HTML5 嵌入（GitHub 在不同界面可能不直接内嵌播放，但会提供下载/预览）：
-
-<video src="docs/ep3.mp4" controls width="720">你的浏览器不支持 video 标签，请点击此处下载： <a href="docs/ep3.mp4">下载视频</a></video>
-
-或者直接提供链接：
-
-[演示视频：ep3.mp4](docs/ep3.mp4)
-
-上传说明：
-
-1. 在本地把视频放到 `docs/ep3.mp4`（若不存在 `docs/` 目录请先创建）。
-2. 提交并推送：
-
-```powershell
-git add docs/ep3.mp4 README.md
-git commit -m "Add demo video ep3.mp4 and README reference"
-git push -u origin $(git branch --show-current)
-```
-
-注意：如果视频较大，建议使用外部托管（GitHub Release、Google Drive 或 S3），或使用 Git LFS；如需我代为上传并配置 Git LFS，请告知。
-
 ## 贡献与联系
 - 欢迎提交 issue/PR，或把你的任务/算法添加为新的子目录。
 - 如果你想加入项目，请通过邮件联系我（zongyangwu2024@163.com）。
+
+## 示例动画
+下面是演示动图示例（把 `docs/act_oick.gif` 放到仓库 `docs/` 下即可显示）：
+
+![ACT 抓取示例](docs/act_oick.gif)
+
+若动图太大或你想使用视频，请参考上面的“演示视频”部分。
