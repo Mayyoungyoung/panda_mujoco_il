@@ -1,0 +1,35 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+
+# Model files (too large for git)
+*.pth
+*.ckpt
+*.pt
+*.h5
+*.weights
+
+# Data files
+*.pkl
+*.pickle
+*.hdf5
+data/
+data_act/
+datasets/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
